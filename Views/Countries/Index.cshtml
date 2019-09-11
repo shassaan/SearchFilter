@@ -1,0 +1,290 @@
+﻿@model IEnumerable<SearchFilter.country>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container" style="background:white !important;    background: white !important;
+    padding: 21px;
+    border-radius: 16px;
+">
+    <div class="row">
+        <div class="col-md-4">
+            <input class="form-control" style="width:200px;" type="text" name="country" id="country" placeholder="Country"/>
+        </div>
+        <div class="col-md-4">
+            <input class="form-control" style="width:200px;" type="text" name="city" id="city" placeholder="city" />
+        </div>
+        <div class="col-md-4">
+            <input class="form-control" style="width:200px;" type="text" name="capital" id="capital" placeholder="Capital" />
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:20px;">
+        <div class="col-md-1">
+            <span>Filter By:   </span>
+        </div>
+
+        <div class="col-md-3" style="margin:4px;">
+            <button id="Pakistan" class="btn btn-info btn-block">Pakistan</button>
+        </div>
+
+        <div class="col-md-3" style="margin:4px;">
+            <button id="Islamabad" class="btn btn-info btn-block">Islamabad</button>
+        </div>
+
+        <div class="col-md-3" style="margin:4px;">
+            <button id="Karachi" class="btn btn-info btn-block">Karachi</button>
+        </div>
+
+        <div class="col-md-1">
+            <span>Showing Results <b><span id="dataCount">@ViewBag.count</span>/ <span id="totalCount">@ViewBag.count</span></b></span>
+        </div>
+    </div>
+</div>
+
+
+<table class="table table-hover" style="margin-top:20px;    margin-top: 20px;
+    background: silver;
+    font-size: x-large;">
+    <tr class="text-info" style="    background: whitesmoke;">
+        <th style="cursor:pointer;" id="countryCol">
+            Country <i class="fa fa-caret-down"   aria-hidden="true"></i>
+        </th>
+        <th style="cursor:pointer;" id="cityCol">
+            City <i class="fa fa-caret-down"  aria-hidden="true"></i>
+        </th>
+        <th style="cursor:pointer;" id="capitalCol">
+            Capital <i class="fa fa-caret-down"  aria-hidden="true"></i>
+        </th>
+        <th></th>
+    </tr>
+
+    <tbody id="tableBody">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.country1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.city)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.capital)
+                </td>
+                
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+
+<script>
+    document.querySelector("#country").addEventListener("keyup", e => {
+        //filterBy(e);
+        let country = document.querySelector("#country").value;
+        let city = document.querySelector("#city").value;
+        let capital = document.querySelector("#capital").value;
+        extFilter(country, city, capital);
+    });
+
+    document.querySelector("#capital").addEventListener("keyup", e => {
+        //filterBy(e);
+
+        let country = document.querySelector("#country").value;
+        let city = document.querySelector("#city").value;
+        let capital = document.querySelector("#capital").value;
+        extFilter(country, city, capital);
+
+    });
+
+    document.querySelector("#city").addEventListener("keyup", e => {
+        //filterBy(e);
+
+
+        let country = document.querySelector("#country").value;
+        let city = document.querySelector("#city").value;
+        let capital = document.querySelector("#capital").value;
+        extFilter(country, city, capital);
+
+    });
+
+
+    document.querySelector("#Pakistan").addEventListener("click", e => {
+        //filterBy(e);
+        fetch(`https://localhost:44385/Countries/FilterName?data=Pakistan`)
+                .then(res => {
+                    if (res.ok) {
+                        res.json().then(data => {
+                            showData(data);
+                        });
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                });
+
+    });
+
+    document.querySelector("#Karachi").addEventListener("click", e => {
+        //filterBy(e);
+        fetch(`https://localhost:44385/Countries/FilterName?data=Karachi`)
+                .then(res => {
+                    if (res.ok) {
+                        res.json().then(data => {
+                            showData(data);
+                        });
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                });
+
+    });
+
+
+    document.querySelector("#Islamabad").addEventListener("click", e => {
+        //filterBy(e);
+        fetch(`https://localhost:44385/Countries/FilterName?data=Islamabad`)
+                .then(res => {
+                    if (res.ok) {
+                        res.json().then(data => {
+                            showData(data);
+                        });
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                });
+
+    });
+
+    
+
+
+    document.querySelector("#countryCol").addEventListener("click", e => {
+        let el = document.querySelector("#countryCol");
+        if (el.childNodes[1].className === "fa fa-caret-down") {
+            el.childNodes[1].className = "fa fa-caret-up";
+            sortBy("country","asc");
+        }else if (el.childNodes[1].className === "fa fa-caret-up") {
+            el.childNodes[1].className = "fa fa-caret-down";
+            sortBy("country","desc");
+        }
+    });
+
+
+    document.querySelector("#cityCol").addEventListener("click", e => {
+        let el = document.querySelector("#cityCol");
+        if (el.childNodes[1].className === "fa fa-caret-down") {
+            el.childNodes[1].className = "fa fa-caret-up";
+            sortBy("city","asc");
+        }else if (el.childNodes[1].className === "fa fa-caret-up") {
+            el.childNodes[1].className = "fa fa-caret-down";
+            sortBy("city","desc");
+        }
+    });
+
+    document.querySelector("#capitalCol").addEventListener("click", e => {
+        let el = document.querySelector("#capitalCol");
+        if (el.childNodes[1].className === "fa fa-caret-down") {
+            el.childNodes[1].className = "fa fa-caret-up";
+            sortBy("capital","asc");
+        }else if (el.childNodes[1].className === "fa fa-caret-up") {
+            el.childNodes[1].className = "fa fa-caret-down";
+            sortBy("capital","desc");
+        }
+    });
+    const showData = (data) => {
+        let html = "";
+
+        data.forEach(e => {
+             html += `<tr>
+                                <td>${e.country1}</td>
+                                <td>${e.city}</td>
+                                <td>${e.capital}</td>
+                                </tr>`
+        });
+
+        document.querySelector("#tableBody").innerHTML = html;
+
+        document.querySelector("#dataCount").innerHTML = data.length;
+    }
+
+    const sortBy = (type, order) => {
+        fetch(`https://localhost:44385/Countries/Sort?type=${type}&order=${order}`)
+                .then(res => {
+                    if (res.ok) {
+                        res.json().then(data => {
+                            showData(data);
+                        });
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                });
+    }
+
+    const extFilter = (country, city, capital) => {
+        fetch(`https://localhost:44385/Countries/ExtFilter?country=${country}&city=${city}&capital=${capital}`)
+                .then(res => {
+                    if (res.ok) {
+                        res.json().then(data => {
+                            showData(data);
+                        });
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                });
+    }
+    const filterBy = (event) => {
+        //let html = "";
+        if (event.target.id === "country") {
+            let value = document.querySelector("#country");
+            fetch(`https://localhost:44385/Countries/Filter?data=${value.value}&type=country`)
+                .then(res => {
+                    if (res.ok) {
+                        res.json().then(data => {
+                            showData(data);
+                        });
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                });
+        } else if (event.target.id === "capital") { 
+            let value = document.querySelector("#capital");
+            fetch(`https://localhost:44385/Countries/Filter?data=${value.value}&type=capital`)
+                .then(res => {
+                    if (res.ok) {
+                        res.json().then(data => {
+                            showData(data);
+                        });
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                });
+
+        } else if (event.target.id === "city") {
+            let value = document.querySelector("#city");
+            //alert("city");
+            fetch(`https://localhost:44385/Countries/Filter?data=${value.value}&type=city`)
+                .then(res => {
+                    if (res.ok) {
+                        res.json().then(data => {
+                            //console.log(data);
+                            showData(data);
+                        });
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                });
+        }
+    }
+</script>
